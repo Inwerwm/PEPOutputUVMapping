@@ -44,17 +44,20 @@
             this.checkBoxWeightMode = new System.Windows.Forms.CheckBox();
             this.comboBoxWeightBone = new System.Windows.Forms.ComboBox();
             this.groupBoxWeightMode = new System.Windows.Forms.GroupBox();
-            this.radioButtonWeightLine = new System.Windows.Forms.RadioButton();
             this.radioButtonWeightFace = new System.Windows.Forms.RadioButton();
+            this.radioButtonWeightLine = new System.Windows.Forms.RadioButton();
+            this.numericScale = new System.Windows.Forms.NumericUpDown();
+            this.labelScale = new System.Windows.Forms.Label();
             this.bgGroupBox.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.lineWidth)).BeginInit();
             this.groupBoxWeightMode.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numericScale)).BeginInit();
             this.SuspendLayout();
             // 
             // ExecuteButton
             // 
             this.ExecuteButton.Font = new System.Drawing.Font("Yu Gothic UI", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.ExecuteButton.Location = new System.Drawing.Point(258, 580);
+            this.ExecuteButton.Location = new System.Drawing.Point(258, 643);
             this.ExecuteButton.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.ExecuteButton.Name = "ExecuteButton";
             this.ExecuteButton.Size = new System.Drawing.Size(147, 68);
@@ -72,7 +75,7 @@
             this.materialListBox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.materialListBox.Name = "materialListBox";
             this.materialListBox.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
-            this.materialListBox.Size = new System.Drawing.Size(237, 634);
+            this.materialListBox.Size = new System.Drawing.Size(237, 697);
             this.materialListBox.TabIndex = 1;
             this.materialListBox.SelectedIndexChanged += new System.EventHandler(this.MaterialListBox_SelectedIndexChanged);
             // 
@@ -83,7 +86,7 @@
             this.bgGroupBox.Controls.Add(this.radioBgTrans);
             this.bgGroupBox.Controls.Add(this.radioBgTex);
             this.bgGroupBox.Font = new System.Drawing.Font("Yu Gothic UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.bgGroupBox.Location = new System.Drawing.Point(258, 430);
+            this.bgGroupBox.Location = new System.Drawing.Point(258, 493);
             this.bgGroupBox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.bgGroupBox.Name = "bgGroupBox";
             this.bgGroupBox.Padding = new System.Windows.Forms.Padding(4, 5, 4, 5);
@@ -158,7 +161,7 @@
             // colorDialogButton
             // 
             this.colorDialogButton.Font = new System.Drawing.Font("Yu Gothic UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.colorDialogButton.Location = new System.Drawing.Point(258, 320);
+            this.colorDialogButton.Location = new System.Drawing.Point(258, 383);
             this.colorDialogButton.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.colorDialogButton.Name = "colorDialogButton";
             this.colorDialogButton.Size = new System.Drawing.Size(147, 46);
@@ -170,7 +173,7 @@
             // selectedColor
             // 
             this.selectedColor.BackColor = System.Drawing.Color.Black;
-            this.selectedColor.Location = new System.Drawing.Point(258, 376);
+            this.selectedColor.Location = new System.Drawing.Point(258, 439);
             this.selectedColor.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.selectedColor.Name = "selectedColor";
             this.selectedColor.Size = new System.Drawing.Size(147, 44);
@@ -179,7 +182,7 @@
             // lineWidth
             // 
             this.lineWidth.Font = new System.Drawing.Font("Yu Gothic UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.lineWidth.Location = new System.Drawing.Point(258, 281);
+            this.lineWidth.Location = new System.Drawing.Point(258, 344);
             this.lineWidth.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.lineWidth.Minimum = new decimal(new int[] {
             1,
@@ -199,7 +202,7 @@
             // 
             this.lineWidthLabel.AutoSize = true;
             this.lineWidthLabel.Font = new System.Drawing.Font("Yu Gothic UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.lineWidthLabel.Location = new System.Drawing.Point(255, 255);
+            this.lineWidthLabel.Location = new System.Drawing.Point(255, 318);
             this.lineWidthLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lineWidthLabel.Name = "lineWidthLabel";
             this.lineWidthLabel.Size = new System.Drawing.Size(82, 21);
@@ -238,6 +241,17 @@
             this.groupBoxWeightMode.TabStop = false;
             this.groupBoxWeightMode.Visible = false;
             // 
+            // radioButtonWeightFace
+            // 
+            this.radioButtonWeightFace.AutoSize = true;
+            this.radioButtonWeightFace.Location = new System.Drawing.Point(8, 86);
+            this.radioButtonWeightFace.Name = "radioButtonWeightFace";
+            this.radioButtonWeightFace.Size = new System.Drawing.Size(89, 25);
+            this.radioButtonWeightFace.TabIndex = 12;
+            this.radioButtonWeightFace.TabStop = true;
+            this.radioButtonWeightFace.Text = "面で描画";
+            this.radioButtonWeightFace.UseVisualStyleBackColor = true;
+            // 
             // radioButtonWeightLine
             // 
             this.radioButtonWeightLine.AutoSize = true;
@@ -250,24 +264,45 @@
             this.radioButtonWeightLine.Text = "線で描画";
             this.radioButtonWeightLine.UseVisualStyleBackColor = true;
             // 
-            // radioButtonWeightFace
+            // numericScale
             // 
-            this.radioButtonWeightFace.AutoSize = true;
-            this.radioButtonWeightFace.Location = new System.Drawing.Point(8, 86);
-            this.radioButtonWeightFace.Name = "radioButtonWeightFace";
-            this.radioButtonWeightFace.Size = new System.Drawing.Size(89, 25);
-            this.radioButtonWeightFace.TabIndex = 12;
-            this.radioButtonWeightFace.TabStop = true;
-            this.radioButtonWeightFace.Text = "面で描画";
-            this.radioButtonWeightFace.UseVisualStyleBackColor = true;
+            this.numericScale.Font = new System.Drawing.Font("Yu Gothic UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            this.numericScale.Location = new System.Drawing.Point(258, 284);
+            this.numericScale.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.numericScale.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.numericScale.Name = "numericScale";
+            this.numericScale.Size = new System.Drawing.Size(147, 29);
+            this.numericScale.TabIndex = 8;
+            this.numericScale.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            // 
+            // labelScale
+            // 
+            this.labelScale.AutoSize = true;
+            this.labelScale.Font = new System.Drawing.Font("Yu Gothic UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            this.labelScale.Location = new System.Drawing.Point(255, 258);
+            this.labelScale.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.labelScale.Name = "labelScale";
+            this.labelScale.Size = new System.Drawing.Size(127, 21);
+            this.labelScale.TabIndex = 9;
+            this.labelScale.Text = "出力サイズ倍率：";
             // 
             // CtrlForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 21F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(424, 661);
+            this.ClientSize = new System.Drawing.Size(419, 726);
             this.Controls.Add(this.groupBoxWeightMode);
             this.Controls.Add(this.checkBoxWeightMode);
+            this.Controls.Add(this.labelScale);
+            this.Controls.Add(this.numericScale);
             this.Controls.Add(this.lineWidthLabel);
             this.Controls.Add(this.lineWidth);
             this.Controls.Add(this.selectedColor);
@@ -280,8 +315,6 @@
             this.Font = new System.Drawing.Font("Yu Gothic UI", 12F);
             this.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.MaximizeBox = false;
-            this.MaximumSize = new System.Drawing.Size(440, 700);
-            this.MinimumSize = new System.Drawing.Size(440, 700);
             this.Name = "CtrlForm";
             this.Text = "UVマップ画像出力";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.CtrlForm_FormClosing);
@@ -290,6 +323,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.lineWidth)).EndInit();
             this.groupBoxWeightMode.ResumeLayout(false);
             this.groupBoxWeightMode.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numericScale)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -315,5 +349,7 @@
         private System.Windows.Forms.GroupBox groupBoxWeightMode;
         private System.Windows.Forms.RadioButton radioButtonWeightFace;
         private System.Windows.Forms.RadioButton radioButtonWeightLine;
+        private System.Windows.Forms.NumericUpDown numericScale;
+        private System.Windows.Forms.Label labelScale;
     }
 }

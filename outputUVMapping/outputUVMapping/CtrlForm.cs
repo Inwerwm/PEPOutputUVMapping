@@ -36,41 +36,46 @@ namespace outputUVMapping
             {
                 //テクスチャの読込
                 string texturePath = pmx.Material[i].Tex;
-                Image texture;
-                if (string.Compare(Path.GetExtension(texturePath), ".tga", true) == 0)
-                    texture = TgaDecoder.TgaDecoder.FromFile(texturePath);
-                else if (string.Compare(Path.GetExtension(texturePath), ".dds", true) == 0)
+                if (string.Compare(Path.GetExtension(texturePath), ".dds", true) == 0)
                 {
                     MessageBox.Show("ddsファイルは未対応です");
                     continue;
                 }
-                else
-                    texture = Image.FromFile(texturePath);
 
-                //画像の生成
+                int width;
+                int height;
+                string errorMessage = "";
+                bool hasOccurError = false;
                 Bitmap UVMap;
-                if (radioBgTex.Checked)
-                    UVMap = new Bitmap(texture);
-                else
-                    UVMap = new Bitmap(texture.Width, texture.Height);
+                Graphics gra;
+                Pen pen;
 
-                Graphics gra = Graphics.FromImage(UVMap);
-                if (radioBgWhite.Checked)
-                    gra.FillRectangle(Brushes.White, gra.VisibleClipBounds);
+                using (Image texture = (string.Compare(Path.GetExtension(texturePath), ".tga", true) == 0) ? TgaDecoder.TgaDecoder.FromFile(texturePath) : Image.FromFile(texturePath))
+                {
+                    //画像の生成
+                    UVMap = new Bitmap(texture.Width * (int)numericScale.Value, texture.Height * (int)numericScale.Value);
+                    gra = Graphics.FromImage(UVMap);
+                    if (radioBgTex.Checked)
+                    {
+                        gra.InterpolationMode = InterpolationMode.HighQualityBicubic;
+                        gra.DrawImage(texture, 0, 0, UVMap.Width, UVMap.Height);
+                    }
+                    if (radioBgWhite.Checked)
+                        gra.FillRectangle(Brushes.White, gra.VisibleClipBounds);
+                }
 
                 //UV情報の描画
-                Pen pen = new Pen(Color.Black);
-                GraphicsPath gp;
+                pen = new Pen(Color.Black);
+                width = UVMap.Width;
+                height = UVMap.Height;
                 foreach (var f in pmx.Material[i].Faces)
                 {
-                    Point[] points = {
-                    new Point((int)(f.Vertex1.UV.X * texture.Width), (int)(f.Vertex1.UV.Y * texture.Height)),
-                    new Point((int)(f.Vertex2.UV.X * texture.Width), (int)(f.Vertex2.UV.Y * texture.Height)),
-                    new Point((int)(f.Vertex3.UV.X * texture.Width), (int)(f.Vertex3.UV.Y * texture.Height))
-                    };
+                    var pointfs = f.ToPointF(width, height);
+                    var points = f.ToPoint(width, height);
 
                     if (checkBoxWeightMode.Checked)
                     {
+
                         //ウェイト値の取得
                         (IPXBone bone, float weight)? weight1 = Utility.GetWeights(f.Vertex1).Find(w => w.bone == pmx.Bone[comboBoxWeightBone.SelectedIndex]);
                         (IPXBone bone, float weight)? weight2 = Utility.GetWeights(f.Vertex2).Find(w => w.bone == pmx.Bone[comboBoxWeightBone.SelectedIndex]);
@@ -84,22 +89,66 @@ namespace outputUVMapping
                         };
 
                         //描画
-                        gp = new GraphicsPath();
-                        gp.AddPolygon(points);
-                        var brush = new PathGradientBrush(gp);
-                        brush.SurroundColors = new Color[] {
-                            Color.FromArgb((int)Math.Round(weight[0] * 255,MidpointRounding.AwayFromZero), 0, 0),
-                            Color.FromArgb((int)Math.Round(weight[1] * 255,MidpointRounding.AwayFromZero), 0, 0),
-                            Color.FromArgb((int)Math.Round(weight[2] * 255,MidpointRounding.AwayFromZero), 0, 0)
-                        };
-                        brush.CenterColor = Color.FromArgb((int)Math.Round(weight.Average() * 255, MidpointRounding.AwayFromZero), 0, 0);
 
-                        if (radioButtonWeightFace.Checked)
-                            gra.FillPolygon(brush, points);
-                        else if (radioButtonWeightLine.Checked)
+                        using (GraphicsPath gp = new GraphicsPath())
                         {
-                            pen.Brush = brush;
-                            gra.DrawPolygon(pen, points);
+                            gp.AddPolygon(points);
+                            try
+                            {
+                                using (PathGradientBrush brush = new PathGradientBrush(gp))
+                                {
+                                    brush.SurroundColors = new Color[] {
+                                        Color.FromArgb((int)Math.Round(weight[0] * 255,MidpointRounding.AwayFromZero), 0, 0),
+                                        Color.FromArgb((int)Math.Round(weight[1] * 255,MidpointRounding.AwayFromZero), 0, 0),
+                                        Color.FromArgb((int)Math.Round(weight[2] * 255,MidpointRounding.AwayFromZero), 0, 0)
+                                    };
+                                    brush.CenterColor = Color.FromArgb((int)Math.Round(weight.Average() * 255, MidpointRounding.AwayFromZero), 0, 0);
+
+                                    if (radioButtonWeightFace.Checked)
+                                        gra.FillPolygon(brush, points);
+                                    else if (radioButtonWeightLine.Checked)
+                                    {
+                                        pen.Brush = brush;
+                                        pen.Width = (float)lineWidth.Value;
+                                        gra.DrawPolygon(pen, points);
+                                    }
+                                }
+                            }
+                            catch (OutOfMemoryException)
+                            {
+                                try
+                                {
+                                    using (GraphicsPath fgp = new GraphicsPath())
+                                    {
+                                        fgp.AddPolygon(pointfs);
+                                        using (PathGradientBrush brush = new PathGradientBrush(fgp))
+                                        {
+                                            brush.SurroundColors = new Color[] {
+                                                Color.FromArgb((int)Math.Round(weight[0] * 255,MidpointRounding.AwayFromZero), 0, 0),
+                                                Color.FromArgb((int)Math.Round(weight[1] * 255,MidpointRounding.AwayFromZero), 0, 0),
+                                                Color.FromArgb((int)Math.Round(weight[2] * 255,MidpointRounding.AwayFromZero), 0, 0)
+                                            };
+                                            brush.CenterColor = Color.FromArgb((int)Math.Round(weight.Average() * 255, MidpointRounding.AwayFromZero), 0, 0);
+
+                                            if (radioButtonWeightFace.Checked)
+                                                gra.FillPolygon(brush, pointfs);
+                                            else if (radioButtonWeightLine.Checked)
+                                            {
+                                                pen.Brush = brush;
+                                                gra.DrawPolygon(pen, pointfs);
+                                            }
+                                        }
+                                    }
+                                }
+                                catch (OutOfMemoryException)
+                                {
+                                    hasOccurError = true;
+                                    errorMessage += "(" + pointfs[0].X + ", " + pointfs[0].Y + "), ";
+                                    errorMessage += "(" + pointfs[1].X + ", " + pointfs[1].Y + "), ";
+                                    errorMessage += "(" + pointfs[2].X + ", " + pointfs[2].Y + ")" + Environment.NewLine;
+                                }
+
+                            }
                         }
                     }
                     else
@@ -109,6 +158,8 @@ namespace outputUVMapping
                         gra.DrawPolygon(pen, points);
                     }
                 }
+                if (hasOccurError)
+                    MessageBox.Show("以下の面の描画に失敗しました：" + Environment.NewLine + errorMessage);
 
                 //画像の保存
                 string savename = Path.GetDirectoryName(pmx.FilePath) + @"\" + Path.GetDirectoryName(texturePath) + @"\" + Path.GetFileNameWithoutExtension(pmx.FilePath) + "_" + pmx.Material[i].Name + "_UVMap.png";
@@ -118,7 +169,6 @@ namespace outputUVMapping
                 pen.Dispose();
                 gra.Dispose();
                 UVMap.Dispose();
-                texture.Dispose();
             }
 
             MessageBox.Show("完了しました");

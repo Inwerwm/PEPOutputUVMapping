@@ -52,6 +52,7 @@
     <Compile Include="CtrlForm.Designer.cs">
       <DependentUpon>CtrlForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="ExtensionMethods.cs" />
     <Compile Include="outputUVMapping.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TgaDecoder.cs" />
