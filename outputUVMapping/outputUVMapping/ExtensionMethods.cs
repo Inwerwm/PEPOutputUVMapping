@@ -91,5 +91,20 @@ namespace outputUVMapping
         {
             return new Point[3] { face.Vertex1.UV.ToPoint(Width, Height), face.Vertex2.UV.ToPoint(Width, Height), face.Vertex3.UV.ToPoint(Width, Height) };
         }
+
+        public static int Round(this float value) => (int)Math.Round(value, MidpointRounding.AwayFromZero);
+
+        public static string Print(this Point point) => "(" + point.X + ", " + point.Y + ")";
+        public static string Print(this PointF point) => "(" + point.X + ", " + point.Y + ")";
+
+        public static V2[] ExtructUV(this IPXFace face)
+        {
+            return new V2[]
+            {
+                face.Vertex1.UV,
+                face.Vertex2.UV,
+                face.Vertex3.UV
+            };
+        }
     }
 }

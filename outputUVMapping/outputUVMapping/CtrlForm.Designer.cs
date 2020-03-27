@@ -44,10 +44,11 @@
             this.checkBoxWeightMode = new System.Windows.Forms.CheckBox();
             this.comboBoxWeightBone = new System.Windows.Forms.ComboBox();
             this.groupBoxWeightMode = new System.Windows.Forms.GroupBox();
-            this.radioButtonWeightFace = new System.Windows.Forms.RadioButton();
-            this.radioButtonWeightLine = new System.Windows.Forms.RadioButton();
+            this.checkBoxWPoint = new System.Windows.Forms.CheckBox();
             this.numericScale = new System.Windows.Forms.NumericUpDown();
             this.labelScale = new System.Windows.Forms.Label();
+            this.checkBoxWLine = new System.Windows.Forms.CheckBox();
+            this.checkBoxWFace = new System.Windows.Forms.CheckBox();
             this.bgGroupBox.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.lineWidth)).BeginInit();
             this.groupBoxWeightMode.SuspendLayout();
@@ -57,7 +58,7 @@
             // ExecuteButton
             // 
             this.ExecuteButton.Font = new System.Drawing.Font("Yu Gothic UI", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.ExecuteButton.Location = new System.Drawing.Point(258, 643);
+            this.ExecuteButton.Location = new System.Drawing.Point(258, 706);
             this.ExecuteButton.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.ExecuteButton.Name = "ExecuteButton";
             this.ExecuteButton.Size = new System.Drawing.Size(147, 68);
@@ -75,7 +76,7 @@
             this.materialListBox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.materialListBox.Name = "materialListBox";
             this.materialListBox.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
-            this.materialListBox.Size = new System.Drawing.Size(237, 697);
+            this.materialListBox.Size = new System.Drawing.Size(237, 760);
             this.materialListBox.TabIndex = 1;
             this.materialListBox.SelectedIndexChanged += new System.EventHandler(this.MaterialListBox_SelectedIndexChanged);
             // 
@@ -86,7 +87,7 @@
             this.bgGroupBox.Controls.Add(this.radioBgTrans);
             this.bgGroupBox.Controls.Add(this.radioBgTex);
             this.bgGroupBox.Font = new System.Drawing.Font("Yu Gothic UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.bgGroupBox.Location = new System.Drawing.Point(258, 493);
+            this.bgGroupBox.Location = new System.Drawing.Point(258, 556);
             this.bgGroupBox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.bgGroupBox.Name = "bgGroupBox";
             this.bgGroupBox.Padding = new System.Windows.Forms.Padding(4, 5, 4, 5);
@@ -161,7 +162,7 @@
             // colorDialogButton
             // 
             this.colorDialogButton.Font = new System.Drawing.Font("Yu Gothic UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.colorDialogButton.Location = new System.Drawing.Point(258, 383);
+            this.colorDialogButton.Location = new System.Drawing.Point(258, 446);
             this.colorDialogButton.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.colorDialogButton.Name = "colorDialogButton";
             this.colorDialogButton.Size = new System.Drawing.Size(147, 46);
@@ -173,7 +174,7 @@
             // selectedColor
             // 
             this.selectedColor.BackColor = System.Drawing.Color.Black;
-            this.selectedColor.Location = new System.Drawing.Point(258, 439);
+            this.selectedColor.Location = new System.Drawing.Point(258, 502);
             this.selectedColor.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.selectedColor.Name = "selectedColor";
             this.selectedColor.Size = new System.Drawing.Size(147, 44);
@@ -182,7 +183,7 @@
             // lineWidth
             // 
             this.lineWidth.Font = new System.Drawing.Font("Yu Gothic UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.lineWidth.Location = new System.Drawing.Point(258, 344);
+            this.lineWidth.Location = new System.Drawing.Point(258, 407);
             this.lineWidth.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.lineWidth.Minimum = new decimal(new int[] {
             1,
@@ -202,7 +203,7 @@
             // 
             this.lineWidthLabel.AutoSize = true;
             this.lineWidthLabel.Font = new System.Drawing.Font("Yu Gothic UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.lineWidthLabel.Location = new System.Drawing.Point(255, 318);
+            this.lineWidthLabel.Location = new System.Drawing.Point(255, 381);
             this.lineWidthLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lineWidthLabel.Name = "lineWidthLabel";
             this.lineWidthLabel.Size = new System.Drawing.Size(82, 21);
@@ -231,43 +232,33 @@
             // 
             // groupBoxWeightMode
             // 
-            this.groupBoxWeightMode.Controls.Add(this.radioButtonWeightFace);
-            this.groupBoxWeightMode.Controls.Add(this.radioButtonWeightLine);
+            this.groupBoxWeightMode.Controls.Add(this.checkBoxWFace);
+            this.groupBoxWeightMode.Controls.Add(this.checkBoxWLine);
+            this.groupBoxWeightMode.Controls.Add(this.checkBoxWPoint);
             this.groupBoxWeightMode.Controls.Add(this.comboBoxWeightBone);
             this.groupBoxWeightMode.Location = new System.Drawing.Point(258, 113);
             this.groupBoxWeightMode.Name = "groupBoxWeightMode";
-            this.groupBoxWeightMode.Size = new System.Drawing.Size(147, 117);
+            this.groupBoxWeightMode.Size = new System.Drawing.Size(147, 150);
             this.groupBoxWeightMode.TabIndex = 12;
             this.groupBoxWeightMode.TabStop = false;
             this.groupBoxWeightMode.Visible = false;
             // 
-            // radioButtonWeightFace
+            // checkBoxWPoint
             // 
-            this.radioButtonWeightFace.AutoSize = true;
-            this.radioButtonWeightFace.Location = new System.Drawing.Point(8, 86);
-            this.radioButtonWeightFace.Name = "radioButtonWeightFace";
-            this.radioButtonWeightFace.Size = new System.Drawing.Size(89, 25);
-            this.radioButtonWeightFace.TabIndex = 12;
-            this.radioButtonWeightFace.TabStop = true;
-            this.radioButtonWeightFace.Text = "面で描画";
-            this.radioButtonWeightFace.UseVisualStyleBackColor = true;
-            // 
-            // radioButtonWeightLine
-            // 
-            this.radioButtonWeightLine.AutoSize = true;
-            this.radioButtonWeightLine.Checked = true;
-            this.radioButtonWeightLine.Location = new System.Drawing.Point(8, 55);
-            this.radioButtonWeightLine.Name = "radioButtonWeightLine";
-            this.radioButtonWeightLine.Size = new System.Drawing.Size(89, 25);
-            this.radioButtonWeightLine.TabIndex = 12;
-            this.radioButtonWeightLine.TabStop = true;
-            this.radioButtonWeightLine.Text = "線で描画";
-            this.radioButtonWeightLine.UseVisualStyleBackColor = true;
+            this.checkBoxWPoint.AutoSize = true;
+            this.checkBoxWPoint.Checked = true;
+            this.checkBoxWPoint.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkBoxWPoint.Location = new System.Drawing.Point(6, 54);
+            this.checkBoxWPoint.Name = "checkBoxWPoint";
+            this.checkBoxWPoint.Size = new System.Drawing.Size(89, 25);
+            this.checkBoxWPoint.TabIndex = 13;
+            this.checkBoxWPoint.Text = "点を描画";
+            this.checkBoxWPoint.UseVisualStyleBackColor = true;
             // 
             // numericScale
             // 
             this.numericScale.Font = new System.Drawing.Font("Yu Gothic UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.numericScale.Location = new System.Drawing.Point(258, 284);
+            this.numericScale.Location = new System.Drawing.Point(258, 347);
             this.numericScale.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.numericScale.Minimum = new decimal(new int[] {
             1,
@@ -287,18 +278,40 @@
             // 
             this.labelScale.AutoSize = true;
             this.labelScale.Font = new System.Drawing.Font("Yu Gothic UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.labelScale.Location = new System.Drawing.Point(255, 258);
+            this.labelScale.Location = new System.Drawing.Point(255, 321);
             this.labelScale.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.labelScale.Name = "labelScale";
             this.labelScale.Size = new System.Drawing.Size(127, 21);
             this.labelScale.TabIndex = 9;
             this.labelScale.Text = "出力サイズ倍率：";
             // 
+            // checkBoxWLine
+            // 
+            this.checkBoxWLine.AutoSize = true;
+            this.checkBoxWLine.Checked = true;
+            this.checkBoxWLine.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkBoxWLine.Location = new System.Drawing.Point(6, 85);
+            this.checkBoxWLine.Name = "checkBoxWLine";
+            this.checkBoxWLine.Size = new System.Drawing.Size(89, 25);
+            this.checkBoxWLine.TabIndex = 13;
+            this.checkBoxWLine.Text = "線を描画";
+            this.checkBoxWLine.UseVisualStyleBackColor = true;
+            // 
+            // checkBoxWFace
+            // 
+            this.checkBoxWFace.AutoSize = true;
+            this.checkBoxWFace.Location = new System.Drawing.Point(6, 116);
+            this.checkBoxWFace.Name = "checkBoxWFace";
+            this.checkBoxWFace.Size = new System.Drawing.Size(89, 25);
+            this.checkBoxWFace.TabIndex = 13;
+            this.checkBoxWFace.Text = "面を描画";
+            this.checkBoxWFace.UseVisualStyleBackColor = true;
+            // 
             // CtrlForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 21F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(419, 726);
+            this.ClientSize = new System.Drawing.Size(419, 789);
             this.Controls.Add(this.groupBoxWeightMode);
             this.Controls.Add(this.checkBoxWeightMode);
             this.Controls.Add(this.labelScale);
@@ -347,9 +360,10 @@
         private System.Windows.Forms.CheckBox checkBoxWeightMode;
         private System.Windows.Forms.ComboBox comboBoxWeightBone;
         private System.Windows.Forms.GroupBox groupBoxWeightMode;
-        private System.Windows.Forms.RadioButton radioButtonWeightFace;
-        private System.Windows.Forms.RadioButton radioButtonWeightLine;
         private System.Windows.Forms.NumericUpDown numericScale;
         private System.Windows.Forms.Label labelScale;
+        private System.Windows.Forms.CheckBox checkBoxWPoint;
+        private System.Windows.Forms.CheckBox checkBoxWFace;
+        private System.Windows.Forms.CheckBox checkBoxWLine;
     }
 }

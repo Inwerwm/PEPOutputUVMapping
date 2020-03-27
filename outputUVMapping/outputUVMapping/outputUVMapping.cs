@@ -28,7 +28,7 @@ namespace outputUVMapping
         {
             get
             {
-                return "1.2";
+                return "2.0";
             }
         }
 
