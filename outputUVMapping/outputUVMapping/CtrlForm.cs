@@ -37,94 +37,93 @@ namespace outputUVMapping
 		{
 			string errorMessage = "以下の面の描画に失敗しました：" + Environment.NewLine;
 			bool hasOccurError = false;
-			using (new StreamWriter("log_OUM.txt"))
-			{
-				foreach (object obj in this.materialListBox.SelectedIndices)
-				{
-					int i = (int)obj;
-					string texturePath = this.pmx.Material[i].Tex;
-					if (string.Compare(Path.GetExtension(texturePath), ".dds", true) == 0)
-					{
-						MessageBox.Show("ddsファイルは未対応です");
-					}
-					else
-					{
-						int width;
-						int height;
-						Bitmap UVMap;
-						Graphics gra;
-						using (Image texture = (string.Compare(Path.GetExtension(texturePath), ".tga", true) == 0) ? TgaDecoder.TgaDecoder.FromFile(texturePath) : Image.FromFile(texturePath))
-						{
-							width = texture.Width * (int)this.numericScale.Value;
-							height = texture.Width * (int)this.numericScale.Value;
-							UVMap = new Bitmap(width + (this.checkBoxWeightMode.Checked ? 1 : 0), height + (this.checkBoxWeightMode.Checked ? 1 : 0));
-							gra = Graphics.FromImage(UVMap);
-							if (this.radioBgTex.Checked)
-							{
-								gra.InterpolationMode = InterpolationMode.HighQualityBicubic;
-								gra.DrawImage(texture, 0, 0, width, height);
-							}
-							if (this.radioBgWhite.Checked)
-							{
-								gra.FillRectangle(Brushes.White, gra.VisibleClipBounds);
-							}
-						}
-						if (this.checkBoxWeightMode.Checked && (this.checkBoxWPoint.Checked || this.checkBoxWFace.Checked || this.checkBoxWLine.Checked))
-						{
-							bool pointOnly = this.checkBoxWPoint.Checked && !this.checkBoxWFace.Checked && !this.checkBoxWLine.Checked;
-							var drawer = new PixelDrawer.PixelDrawer(width, height);
-							List<Color[]> weightColors = new List<Color[]>();
-							List<V2[]> UVs = new List<V2[]>();
-							foreach (IPXFace f in this.pmx.Material[i].Faces)
-							{
-								(IPXBone bone, float weight)? weight1 = Utility.GetWeights(f.Vertex1).Find(w => w.bone == pmx.Bone[comboBoxWeightBone.SelectedIndex]);
-								(IPXBone bone, float weight)? weight2 = Utility.GetWeights(f.Vertex2).Find(w => w.bone == pmx.Bone[comboBoxWeightBone.SelectedIndex]);
-								(IPXBone bone, float weight)? weight3 = Utility.GetWeights(f.Vertex3).Find(w => w.bone == pmx.Bone[comboBoxWeightBone.SelectedIndex]);
 
-								var weight = new float[] { (weight1?.weight) ?? 0, (weight2?.weight) ?? 0, (weight3?.weight) ?? 0 };
-								weightColors.Add((from w in weight select Color.FromArgb((w * 255f).Round(), 0, 0)).ToArray());
-								UVs.Add(f.ExtructUV());
-								try
+			foreach (object obj in this.materialListBox.SelectedIndices)
+			{
+				int i = (int)obj;
+				string texturePath = this.pmx.Material[i].Tex;
+				if (string.Compare(Path.GetExtension(texturePath), ".dds", true) == 0)
+				{
+					MessageBox.Show("ddsファイルは未対応です");
+				}
+				else
+				{
+					int width;
+					int height;
+					Bitmap UVMap;
+					Graphics gra;
+					using (Image texture = (string.Compare(Path.GetExtension(texturePath), ".tga", true) == 0) ? TgaDecoder.TgaDecoder.FromFile(texturePath) : Image.FromFile(texturePath))
+					{
+						width = texture.Width * (int)this.numericScale.Value;
+						height = texture.Width * (int)this.numericScale.Value;
+						UVMap = new Bitmap(width + (this.checkBoxWeightMode.Checked ? 1 : 0), height + (this.checkBoxWeightMode.Checked ? 1 : 0));
+						gra = Graphics.FromImage(UVMap);
+						if (this.radioBgTex.Checked)
+						{
+							gra.InterpolationMode = InterpolationMode.HighQualityBicubic;
+							gra.DrawImage(texture, 0, 0, width, height);
+						}
+						if (this.radioBgWhite.Checked)
+						{
+							gra.FillRectangle(Brushes.White, gra.VisibleClipBounds);
+						}
+					}
+					if (this.checkBoxWeightMode.Checked && (this.checkBoxWPoint.Checked || this.checkBoxWFace.Checked || this.checkBoxWLine.Checked))
+					{
+						bool pointOnly = this.checkBoxWPoint.Checked && !this.checkBoxWFace.Checked && !this.checkBoxWLine.Checked;
+						var drawer = new PixelDrawer.PixelDrawer(width, height);
+						List<Color[]> weightColors = new List<Color[]>();
+						List<V2[]> UVs = new List<V2[]>();
+						foreach (IPXFace f in this.pmx.Material[i].Faces)
+						{
+							(IPXBone bone, float weight)? weight1 = Utility.GetWeights(f.Vertex1).Find(w => w.bone == pmx.Bone[comboBoxWeightBone.SelectedIndex]);
+							(IPXBone bone, float weight)? weight2 = Utility.GetWeights(f.Vertex2).Find(w => w.bone == pmx.Bone[comboBoxWeightBone.SelectedIndex]);
+							(IPXBone bone, float weight)? weight3 = Utility.GetWeights(f.Vertex3).Find(w => w.bone == pmx.Bone[comboBoxWeightBone.SelectedIndex]);
+
+							var weight = new float[] { (weight1?.weight) ?? 0, (weight2?.weight) ?? 0, (weight3?.weight) ?? 0 };
+							weightColors.Add((from w in weight select Color.FromArgb((w * 255f).Round(), 0, 0)).ToArray());
+							UVs.Add(f.ExtructUV());
+							try
+							{
+								if (pointOnly)
 								{
-									if (pointOnly)
+									drawer.Plot(weightColors.Last(), UVs.Last(), (int)this.lineWidth.Value);
+								}
+								else
+								{
+									if (this.checkBoxWFace.Checked)
 									{
-										drawer.Plot(weightColors.Last(), UVs.Last());
+										drawer.FillPolygon(weightColors.Last(), UVs.Last());
 									}
-									else
+									if (this.checkBoxWLine.Checked)
 									{
-										if (this.checkBoxWFace.Checked)
-										{
-											drawer.FillPolygon(weightColors.Last(), UVs.Last());
-										}
-										if (this.checkBoxWLine.Checked)
-										{
-											drawer.DrawPolygon(weightColors.Last(), UVs.Last(), (float)lineWidth.Value);
-										}
+										drawer.DrawPolygon(weightColors.Last(), UVs.Last(), (float)lineWidth.Value);
 									}
 								}
-								catch (OutOfMemoryException)
+							}
+							catch (OutOfMemoryException)
+							{
+								hasOccurError = true;
+								errorMessage = string.Concat(new string[]
 								{
-									hasOccurError = true;
-									errorMessage = string.Concat(new string[]
-									{
 										errorMessage,
 										"(",
 										f.Vertex1.UV.X.ToString(),
 										", ",
 										f.Vertex1.UV.Y.ToString(),
 										"), "
-									});
-									errorMessage = string.Concat(new string[]
-									{
+								});
+								errorMessage = string.Concat(new string[]
+								{
 										errorMessage,
 										"(",
 										f.Vertex2.UV.X.ToString(),
 										", ",
 										f.Vertex2.UV.Y.ToString(),
 										"), "
-									});
-									errorMessage = string.Concat(new string[]
-									{
+								});
+								errorMessage = string.Concat(new string[]
+								{
 										errorMessage,
 										"(",
 										f.Vertex3.UV.X.ToString(),
@@ -132,32 +131,33 @@ namespace outputUVMapping
 										f.Vertex3.UV.Y.ToString(),
 										")",
 										Environment.NewLine
-									});
-								}
-							}
-							if (this.checkBoxWPoint.Checked && !pointOnly)
-							{
-								for (int j = 0; j < this.pmx.Material[i].Faces.Count; j++)
-								{
-									drawer.Plot(weightColors[j], UVs[j]);
-								}
-							}
-							drawer.Write();
-							gra.DrawImage(drawer.Canvas, 0, 0);
-						}
-						else
-						{
-							foreach (PXSide side in new PXMesh(this.pmx.Material[i]).Sides)
-							{
-								using (Pen pen = new Pen(this.cDialog.Color))
-								{
-									pen.Width = (float)this.lineWidth.Value;
-									gra.DrawLine(pen, side.VertexPair[0].UV.ToPoint(width, height), side.VertexPair[1].UV.ToPoint(width, height));
-								}
+								});
 							}
 						}
-						string savename = string.Concat(new string[]
+						if (this.checkBoxWPoint.Checked && !pointOnly)
 						{
+							for (int j = 0; j < this.pmx.Material[i].Faces.Count; j++)
+							{
+								drawer.Plot(weightColors[j], UVs[j], (int)this.lineWidth.Value);
+							}
+						}
+
+						drawer.Write();
+						gra.DrawImage(drawer.Canvas, 0, 0);
+					}
+					else
+					{
+						foreach (PXSide side in new PXMesh(this.pmx.Material[i]).Sides)
+						{
+							using (Pen pen = new Pen(this.cDialog.Color))
+							{
+								pen.Width = (float)this.lineWidth.Value;
+								gra.DrawLine(pen, side.VertexPair[0].UV.ToPoint(width, height), side.VertexPair[1].UV.ToPoint(width, height));
+							}
+						}
+					}
+					string savename = string.Concat(new string[]
+					{
 							Path.GetDirectoryName(this.pmx.FilePath),
 							"\\",
 							Path.GetDirectoryName(texturePath),
@@ -166,19 +166,19 @@ namespace outputUVMapping
 							"_",
 							this.pmx.Material[i].Name,
 							"_UVMap.png"
-						});
-						UVMap.Save(savename, ImageFormat.Png);
-						gra.Dispose();
-						UVMap.Dispose();
-					}
+					});
+					UVMap.Save(savename, ImageFormat.Png);
+					gra.Dispose();
+					UVMap.Dispose();
 				}
-				string message = "完了しました。" + Environment.NewLine;
-				if (hasOccurError)
-				{
-					message += errorMessage;
-				}
-				MessageBox.Show(message);
 			}
+			string message = "完了しました。" + Environment.NewLine;
+			if (hasOccurError)
+			{
+				message += errorMessage;
+			}
+			MessageBox.Show(message);
+
 		}
 
 		private void MaterialListBox_SelectedIndexChanged(object sender, EventArgs e)
