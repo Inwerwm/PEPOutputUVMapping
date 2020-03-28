@@ -106,5 +106,8 @@ namespace outputUVMapping
                 face.Vertex3.UV
             };
         }
+
+        public static string Print(this V2 v) => "(" + v.U + ", " + v.V + ")";
+        public static string PrintUV(this IPXFace f) => $"{f.Vertex1.UV.Print()}, {f.Vertex2.UV.Print()}, {f.Vertex3.UV.Print()}";
     }
 }

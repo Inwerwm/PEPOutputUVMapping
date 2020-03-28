@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace PEPlugin.Pmx
 {
-    class PXSide : IEquatable<PXSide>, IEqualityComparer<PXSide>
+    public class PXSide : IEquatable<PXSide>, IEqualityComparer<PXSide>
     {
         public IPXVertex[] VertexPair { get; private set; }
 
@@ -41,7 +41,7 @@ namespace PEPlugin.Pmx
 
         public int GetHashCode(PXSide obj) => (VertexPair[0].GetHashCode() / 2) + (VertexPair[1].GetHashCode() / 2);
     }
-    class PXMesh
+    public class PXMesh
     {
         private List<PXSide> _Sides { get; set; }
         public ReadOnlyCollection<PXSide> Sides { get => _Sides.AsReadOnly(); }

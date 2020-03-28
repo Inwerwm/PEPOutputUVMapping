@@ -35,8 +35,8 @@ namespace outputUVMapping
 
 		private void ExecuteButton_Click(object sender, EventArgs e)
 		{
-			string errorMessage = "以下の面の描画に失敗しました：" + Environment.NewLine;
-			bool hasOccurError = false;
+			List<IPXFace> errorFaces = new List<IPXFace>();
+			string savename, savePath = "";
 
 			foreach (object obj in this.materialListBox.SelectedIndices)
 			{
@@ -117,35 +117,7 @@ namespace outputUVMapping
 						}
 						catch (OutOfMemoryException)
 						{
-							hasOccurError = true;
-							errorMessage = string.Concat(new string[]
-							{
-										errorMessage,
-										"(",
-										f.Vertex1.UV.X.ToString(),
-										", ",
-										f.Vertex1.UV.Y.ToString(),
-										"), "
-							});
-							errorMessage = string.Concat(new string[]
-							{
-										errorMessage,
-										"(",
-										f.Vertex2.UV.X.ToString(),
-										", ",
-										f.Vertex2.UV.Y.ToString(),
-										"), "
-							});
-							errorMessage = string.Concat(new string[]
-							{
-										errorMessage,
-										"(",
-										f.Vertex3.UV.X.ToString(),
-										", ",
-										f.Vertex3.UV.Y.ToString(),
-										")",
-										Environment.NewLine
-							});
+							errorFaces.Add(f);
 						}
 					}
 					if (this.checkBoxWPoint.Checked && !pointOnly)
@@ -170,21 +142,26 @@ namespace outputUVMapping
 						}
 					}
 				}
-
-				string savename;
-				if (texturePath == "")
-					savename = $"{Path.GetDirectoryName(this.pmx.FilePath)}\\{Path.GetFileNameWithoutExtension(this.pmx.FilePath)}_{pmx.Material[i].Name}{(checkBoxWeightMode.Checked ? "_WeightMap.png" : "_UVMap.png")}";
-				else
-					savename = $"{Path.GetDirectoryName(this.pmx.FilePath)}\\{Path.GetDirectoryName(texturePath)}\\{Path.GetFileNameWithoutExtension(this.pmx.FilePath)}_{pmx.Material[i].Name}{(checkBoxWeightMode.Checked ? "_WeightMap.png" : "_UVMap.png")}";
+				savePath = texturePath == ""
+						 ? $"{Path.GetDirectoryName(pmx.FilePath)}\\{Path.GetFileNameWithoutExtension(pmx.FilePath)}_{pmx.Material[i].Name}"
+						 : $"{Path.GetDirectoryName(pmx.FilePath)}\\{Path.GetDirectoryName(texturePath)}\\{Path.GetFileNameWithoutExtension(pmx.FilePath)}_{pmx.Material[i].Name}";
+				savename = savePath + (checkBoxWeightMode.Checked ? "_WeightMap.png" : "_UVMap.png");
 				UVMap.Save(savename, ImageFormat.Png);
 				gra.Dispose();
 				UVMap.Dispose();
-
 			}
-			string message = "完了しました。" + Environment.NewLine;
-			if (hasOccurError)
+			string message = "完了しました。";
+			if (errorFaces.Count>0)
 			{
-				message += errorMessage;
+				savename = savePath + "_ErrorLog.txt";
+				using(StreamWriter writer=new StreamWriter(savename))
+				{
+					foreach (var f in errorFaces)
+					{
+						writer.WriteLine(f.PrintUV());
+					}
+				}
+				message += $"{Environment.NewLine}{errorFaces.Count}枚の面の描画に失敗しました。{Environment.NewLine}エラーログを{Path.GetDirectoryName(savename)}に出力しました。";
 			}
 			MessageBox.Show(message);
 
