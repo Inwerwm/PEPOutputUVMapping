@@ -44,14 +44,24 @@ namespace outputUVMapping
 				string texturePath = this.pmx.Material[i].Tex;
 				if (string.Compare(Path.GetExtension(texturePath), ".dds", true) == 0)
 				{
-					MessageBox.Show("ddsファイルは未対応です");
+					if (radioBgTex.Checked)
+						MessageBox.Show("ddsファイルは未対応です" + Environment.NewLine + "背景テクスチャは透明で出力します。");
+					texturePath = "";
+				}
+
+				int width;
+				int height;
+				Bitmap UVMap;
+				Graphics gra;
+				if (texturePath == "")
+				{
+					width = 1024 * (int)this.numericScale.Value;
+					height = 1024 * (int)this.numericScale.Value;
+					UVMap = new Bitmap(width + (this.checkBoxWeightMode.Checked ? 1 : 0), height + (this.checkBoxWeightMode.Checked ? 1 : 0));
+					gra = Graphics.FromImage(UVMap);
 				}
 				else
 				{
-					int width;
-					int height;
-					Bitmap UVMap;
-					Graphics gra;
 					using (Image texture = (string.Compare(Path.GetExtension(texturePath), ".tga", true) == 0) ? TgaDecoder.TgaDecoder.FromFile(texturePath) : Image.FromFile(texturePath))
 					{
 						width = texture.Width * (int)this.numericScale.Value;
@@ -63,67 +73,71 @@ namespace outputUVMapping
 							gra.InterpolationMode = InterpolationMode.HighQualityBicubic;
 							gra.DrawImage(texture, 0, 0, width, height);
 						}
-						if (this.radioBgWhite.Checked)
-						{
-							gra.FillRectangle(Brushes.White, gra.VisibleClipBounds);
-						}
 					}
-					if (this.checkBoxWeightMode.Checked && (this.checkBoxWPoint.Checked || this.checkBoxWFace.Checked || this.checkBoxWLine.Checked))
-					{
-						bool pointOnly = this.checkBoxWPoint.Checked && !this.checkBoxWFace.Checked && !this.checkBoxWLine.Checked;
-						var drawer = new PixelDrawer.PixelDrawer(width, height);
-						List<Color[]> weightColors = new List<Color[]>();
-						List<V2[]> UVs = new List<V2[]>();
-						foreach (IPXFace f in this.pmx.Material[i].Faces)
-						{
-							(IPXBone bone, float weight)? weight1 = Utility.GetWeights(f.Vertex1).Find(w => w.bone == pmx.Bone[comboBoxWeightBone.SelectedIndex]);
-							(IPXBone bone, float weight)? weight2 = Utility.GetWeights(f.Vertex2).Find(w => w.bone == pmx.Bone[comboBoxWeightBone.SelectedIndex]);
-							(IPXBone bone, float weight)? weight3 = Utility.GetWeights(f.Vertex3).Find(w => w.bone == pmx.Bone[comboBoxWeightBone.SelectedIndex]);
+				}
 
-							var weight = new float[] { (weight1?.weight) ?? 0, (weight2?.weight) ?? 0, (weight3?.weight) ?? 0 };
-							weightColors.Add((from w in weight select Color.FromArgb((w * 255f).Round(), 0, 0)).ToArray());
-							UVs.Add(f.ExtructUV());
-							try
+				if (this.radioBgWhite.Checked)
+				{
+					gra.FillRectangle(Brushes.White, gra.VisibleClipBounds);
+				}
+
+
+				if (this.checkBoxWeightMode.Checked && (this.checkBoxWPoint.Checked || this.checkBoxWFace.Checked || this.checkBoxWLine.Checked))
+				{
+					bool pointOnly = this.checkBoxWPoint.Checked && !this.checkBoxWFace.Checked && !this.checkBoxWLine.Checked;
+					var drawer = new PixelDrawer.PixelDrawer(width, height);
+					List<Color[]> weightColors = new List<Color[]>();
+					List<V2[]> UVs = new List<V2[]>();
+					foreach (IPXFace f in this.pmx.Material[i].Faces)
+					{
+						(IPXBone bone, float weight)? weight1 = Utility.GetWeights(f.Vertex1).Find(w => w.bone == pmx.Bone[comboBoxWeightBone.SelectedIndex]);
+						(IPXBone bone, float weight)? weight2 = Utility.GetWeights(f.Vertex2).Find(w => w.bone == pmx.Bone[comboBoxWeightBone.SelectedIndex]);
+						(IPXBone bone, float weight)? weight3 = Utility.GetWeights(f.Vertex3).Find(w => w.bone == pmx.Bone[comboBoxWeightBone.SelectedIndex]);
+
+						var weight = new float[] { (weight1?.weight) ?? 0, (weight2?.weight) ?? 0, (weight3?.weight) ?? 0 };
+						weightColors.Add((from w in weight select Color.FromArgb((w * 255f).Round(), 0, 0)).ToArray());
+						UVs.Add(f.ExtructUV());
+						try
+						{
+							if (pointOnly)
 							{
-								if (pointOnly)
+								drawer.Plot(weightColors.Last(), UVs.Last(), (int)this.lineWidth.Value);
+							}
+							else
+							{
+								if (this.checkBoxWFace.Checked)
 								{
-									drawer.Plot(weightColors.Last(), UVs.Last(), (int)this.lineWidth.Value);
+									drawer.FillPolygon(weightColors.Last(), UVs.Last());
 								}
-								else
+								if (this.checkBoxWLine.Checked)
 								{
-									if (this.checkBoxWFace.Checked)
-									{
-										drawer.FillPolygon(weightColors.Last(), UVs.Last());
-									}
-									if (this.checkBoxWLine.Checked)
-									{
-										drawer.DrawPolygon(weightColors.Last(), UVs.Last(), (float)lineWidth.Value);
-									}
+									drawer.DrawPolygon(weightColors.Last(), UVs.Last(), (float)lineWidth.Value);
 								}
 							}
-							catch (OutOfMemoryException)
+						}
+						catch (OutOfMemoryException)
+						{
+							hasOccurError = true;
+							errorMessage = string.Concat(new string[]
 							{
-								hasOccurError = true;
-								errorMessage = string.Concat(new string[]
-								{
 										errorMessage,
 										"(",
 										f.Vertex1.UV.X.ToString(),
 										", ",
 										f.Vertex1.UV.Y.ToString(),
 										"), "
-								});
-								errorMessage = string.Concat(new string[]
-								{
+							});
+							errorMessage = string.Concat(new string[]
+							{
 										errorMessage,
 										"(",
 										f.Vertex2.UV.X.ToString(),
 										", ",
 										f.Vertex2.UV.Y.ToString(),
 										"), "
-								});
-								errorMessage = string.Concat(new string[]
-								{
+							});
+							errorMessage = string.Concat(new string[]
+							{
 										errorMessage,
 										"(",
 										f.Vertex3.UV.X.ToString(),
@@ -131,46 +145,41 @@ namespace outputUVMapping
 										f.Vertex3.UV.Y.ToString(),
 										")",
 										Environment.NewLine
-								});
-							}
+							});
 						}
-						if (this.checkBoxWPoint.Checked && !pointOnly)
+					}
+					if (this.checkBoxWPoint.Checked && !pointOnly)
+					{
+						for (int j = 0; j < this.pmx.Material[i].Faces.Count; j++)
 						{
-							for (int j = 0; j < this.pmx.Material[i].Faces.Count; j++)
-							{
-								drawer.Plot(weightColors[j], UVs[j], (int)this.lineWidth.Value);
-							}
+							drawer.Plot(weightColors[j], UVs[j], (int)this.lineWidth.Value);
 						}
+					}
 
-						drawer.Write();
-						gra.DrawImage(drawer.Canvas, 0, 0);
-					}
-					else
+					drawer.Write();
+					gra.DrawImage(drawer.Canvas, 0, 0);
+				}
+				else
+				{
+					foreach (PXSide side in new PXMesh(this.pmx.Material[i]).Sides)
 					{
-						foreach (PXSide side in new PXMesh(this.pmx.Material[i]).Sides)
+						using (Pen pen = new Pen(this.cDialog.Color))
 						{
-							using (Pen pen = new Pen(this.cDialog.Color))
-							{
-								pen.Width = (float)this.lineWidth.Value;
-								gra.DrawLine(pen, side.VertexPair[0].UV.ToPoint(width, height), side.VertexPair[1].UV.ToPoint(width, height));
-							}
+							pen.Width = (float)this.lineWidth.Value;
+							gra.DrawLine(pen, side.VertexPair[0].UV.ToPoint(width, height), side.VertexPair[1].UV.ToPoint(width, height));
 						}
 					}
-					string savename = string.Concat(new string[]
-					{
-							Path.GetDirectoryName(this.pmx.FilePath),
-							"\\",
-							Path.GetDirectoryName(texturePath),
-							"\\",
-							Path.GetFileNameWithoutExtension(this.pmx.FilePath),
-							"_",
-							this.pmx.Material[i].Name,
-							"_UVMap.png"
-					});
-					UVMap.Save(savename, ImageFormat.Png);
-					gra.Dispose();
-					UVMap.Dispose();
 				}
+
+				string savename;
+				if (texturePath == "")
+					savename = $"{Path.GetDirectoryName(this.pmx.FilePath)}\\{Path.GetFileNameWithoutExtension(this.pmx.FilePath)}_{pmx.Material[i].Name}{(checkBoxWeightMode.Checked ? "_WeightMap.png" : "_UVMap.png")}";
+				else
+					savename = $"{Path.GetDirectoryName(this.pmx.FilePath)}\\{Path.GetDirectoryName(texturePath)}\\{Path.GetFileNameWithoutExtension(this.pmx.FilePath)}_{pmx.Material[i].Name}{(checkBoxWeightMode.Checked ? "_WeightMap.png" : "_UVMap.png")}";
+				UVMap.Save(savename, ImageFormat.Png);
+				gra.Dispose();
+				UVMap.Dispose();
+
 			}
 			string message = "完了しました。" + Environment.NewLine;
 			if (hasOccurError)
