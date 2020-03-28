@@ -36,7 +36,7 @@ namespace outputUVMapping
 		private void ExecuteButton_Click(object sender, EventArgs e)
 		{
 			List<IPXFace> errorFaces = new List<IPXFace>();
-			string savename, savePath = "";
+			string savename = "", savePath = "";
 
 			foreach (object obj in this.materialListBox.SelectedIndices)
 			{
@@ -150,11 +150,11 @@ namespace outputUVMapping
 				gra.Dispose();
 				UVMap.Dispose();
 			}
-			string message = "完了しました。";
-			if (errorFaces.Count>0)
+			string message = $"完了しました。{Environment.NewLine}{savename}を出力しました。";
+			if (errorFaces.Count > 0)
 			{
 				savename = savePath + "_ErrorLog.txt";
-				using(StreamWriter writer=new StreamWriter(savename))
+				using (StreamWriter writer = new StreamWriter(savename))
 				{
 					foreach (var f in errorFaces)
 					{
